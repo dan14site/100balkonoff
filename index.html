@@ -111,26 +111,28 @@
 <section id="game-section" class="game-section">
   <div class="wrap">
     <div class="section-heading compact">
-      <div><span class="kicker">МИНИ-ИГРА</span><h2>Помоги бобру добежать до балкона 🦫</h2></div>
-      <p>Пробел / ↑ / тап — прыжок. Второе быстрое нажатие даёт второй прыжок. Перепрыгивай брёвна и доберись до балкона.</p>
+      <div><span class="kicker">МИНИ-ИГРА</span><h2>Бобёр на лесной пробежке 🦫</h2></div>
+      <p>Бесконечный бег по лесу, как у динозаврика в Google. Чем дальше — тем быстрее. Пробел / ↑ / тап — прыжок, второе нажатие в воздухе — двойной прыжок с сальто.</p>
     </div>
     <div class="game-shell">
       <div class="game-top">
-        <div><span class="game-label">СЧЁТ</span><b id="score">0000</b></div>
+        <div><span class="game-label">МЕТРЫ</span><b id="score">0000</b></div>
         <div><span class="game-label">РЕКОРД</span><b id="best">0000</b></div>
+        <div><span class="game-label">СКОРОСТЬ</span><b id="speed">×1.00</b></div>
         <div><span class="game-label">ПРЫЖКИ</span><b id="jumps">2/2</b></div>
-        <div class="game-tip">ПРОБЕЛ / ↑ / ТАП — 1-Й + 2-Й ПРЫЖОК</div>
+        <div class="game-tip">ПРОБЕЛ / ↑ / ТАП — ПРЫЖОК · P — ПАУЗА · M — ЗВУК</div>
+        <button class="game-sound" id="muteBtn" type="button" aria-label="Выключить звук" title="Выключить звук (M)">🔊</button>
       </div>
       <div class="game-stage">
-        <canvas id="game" width="1000" height="340" aria-label="Мини-игра: бобёр бежит к балкону и перепрыгивает брёвна"></canvas>
-        <div class="game-hint" id="gameHint">Нажми пробел или тап — бобёр подпрыгнет. Второе нажатие в воздухе даёт двойной прыжок.</div>
+        <canvas id="game" aria-label="Мини-игра: бобёр бесконечно бежит по лесу и перепрыгивает брёвна"></canvas>
         <div class="game-overlay" id="gameOverlay" aria-live="polite" hidden>
           <div class="game-result">
             <div class="result-icon">🦫</div>
-            <div class="result-kicker" id="gameResultKicker">ФИНИШ • 100BALKONOFF</div>
-            <h3 id="gameResultTitle">Бобёр добрался до балкона!</h3>
-            <p id="gameResultScore">Счёт: 0000</p>
-            <button class="restart" id="restart" type="button">Начать с начала</button>
+            <div class="result-kicker" id="gameResultKicker">БЕСКОНЕЧНЫЙ БЕГ • 100BALKONOFF</div>
+            <h3 id="gameResultTitle">Бобёр на лесной пробежке 🦫</h3>
+            <p id="gameResultScore">Пробежал: 0 м</p>
+            <p class="result-best" id="gameResultBest" hidden></p>
+            <button class="restart" id="restart" type="button">Начать бег</button>
           </div>
         </div>
       </div>
@@ -148,5 +150,6 @@
   <button class="lb-next" aria-label="Следующее" type="button">›</button>
 </div>
 <script src="script.js"></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
