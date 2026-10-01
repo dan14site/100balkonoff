@@ -15,11 +15,11 @@
   const W = 1000;
   const H = 340;
   const GROUND = 286;
-  const GOAL_DISTANCE = 4800;
+  const GOAL_DISTANCE = 9000;
   const MAX_JUMPS = 2;
-  const GRAVITY = 1900;
-  const FIRST_JUMP_POWER = 760;
-  const SECOND_JUMP_POWER = 690;
+  const GRAVITY = 1350;
+  const FIRST_JUMP_POWER = 720;
+  const SECOND_JUMP_POWER = 660;
 
   let cssWidth = W;
   let cssHeight = H;
@@ -27,13 +27,15 @@
   let running = false;
   let score = 0;
   let distance = 0;
-  let speed = 285;
+  let speed = 260;
   let last = 0;
-  let nextSpawnDistance = 650;
+  let nextSpawnDistance = 1120;
   let obstacles = [];
   let best = Number(localStorage.getItem('bobrBest') || 0);
   let animationId = 0;
   let startedOnce = false;
+  let obstacleNumber = 0;
+  let lastInputAt = 0;
 
   bestEl.textContent = String(best).padStart(4, '0');
   if (jumpsEl) jumpsEl.textContent = '2/2';
@@ -47,7 +49,8 @@
     onGround: true,
     jumpCount: 0,
     runPhase: 0,
-    blink: 0
+    blink: 0,
+    coyote: 0
   };
 
   function getCanvasSize() {
@@ -74,7 +77,9 @@
     score = 0;
     distance = 0;
     speed = 285;
-    nextSpawnDistance = 650;
+    nextSpawnDistance = 1120;
+    obstacleNumber = 0;
+    lastInputAt = 0;
     obstacles = [];
     bob.feetY = GROUND;
     bob.vy = 0;
@@ -82,6 +87,7 @@
     bob.jumpCount = 0;
     bob.runPhase = 0;
     bob.blink = 0;
+    bob.coyote = 0;
     running = true;
     startedOnce = true;
     hint.hidden = true;
@@ -97,14 +103,15 @@
   }
 
   function performJump() {
-    if (bob.onGround) {
+    if (bob.onGround || bob.coyote > 0) {
       bob.vy = -FIRST_JUMP_POWER;
       bob.onGround = false;
+      bob.coyote = 0;
       bob.jumpCount = 1;
       updateJumpHud();
       return true;
     }
-    if (bob.jumpCount < MAX_JUMPS) {
+    if (!bob.onGround && bob.jumpCount === 1) {
       bob.vy = -SECOND_JUMP_POWER;
       bob.jumpCount = MAX_JUMPS;
       updateJumpHud();
@@ -114,11 +121,16 @@
   }
 
   function jump() {
+    const now = performance.now();
     if (!running) {
       reset(true);
+      lastInputAt = now;
       return;
     }
+    // Every input during the first jump is the second jump. This also makes
+    // fast mouse double-clicks and touch double-taps behave predictably.
     performJump();
+    lastInputAt = now;
   }
 
   function updateJumpHud() {
@@ -501,12 +513,15 @@
   }
 
   function spawnObstacle() {
-    // Obstacles have two sizes: normal and large. Both are designed around the two-jump mechanic.
-    const large = Math.random() < 0.28;
-    const h = large ? 56 + Math.random() * 17 : 36 + Math.random() * 18;
-    const w = large ? 54 + Math.random() * 18 : 38 + Math.random() * 16;
+    obstacleNumber += 1;
+    // The first obstacles are deliberately easy. Every third obstacle is
+    // larger so the second jump has a clear purpose, without creating
+    // unavoidable back-to-back collisions.
+    const large = obstacleNumber % 3 === 0 || Math.random() < 0.14;
+    const h = large ? 54 + Math.random() * 18 : 31 + Math.random() * 13;
+    const w = large ? 68 + Math.random() * 28 : 40 + Math.random() * 20;
     obstacles.push({
-      x: W + 36,
+      x: W + 44,
       w,
       h,
       counted: false
@@ -540,16 +555,19 @@
   }
 
   function collides(o) {
-    // Tighter hitboxes make the game fair: only the lower body/feet can hit a log.
-    const left = bob.x + 30;
-    const right = bob.x + bob.w - 24;
-    const top = bob.feetY - bob.h + 30;
-    const bottom = bob.feetY - 8;
-    const obstacleLeft = o.x + 4;
-    const obstacleRight = o.x + o.w - 4;
-    const obstacleTop = GROUND - o.h + 3;
-    const obstacleBottom = GROUND;
-    return right > obstacleLeft && left < obstacleRight && bottom > obstacleTop && top < obstacleBottom;
+    // Only the lower body can hit a log, and only while descending / near the
+    // log height. This makes a clean jump reliably clear the obstacle.
+    const left = bob.x + 38;
+    const right = bob.x + bob.w - 25;
+    const obstacleLeft = o.x + 6;
+    const obstacleRight = o.x + o.w - 6;
+    const obstacleTop = GROUND - o.h;
+    const playerFeet = bob.feetY - 1;
+    const descending = bob.vy > -260;
+    return right > obstacleLeft && left < obstacleRight
+      && descending
+      && playerFeet > obstacleTop + 9
+      && playerFeet < GROUND + 4;
   }
 
   function loop(t) {
@@ -560,15 +578,17 @@
     ctx.clearRect(0, 0, W, H);
     drawBackground(t);
 
-    // Speed ramps gently, leaving enough time to react to every obstacle.
-    speed = Math.min(445, speed + 6.2 * dt);
+    // Speed ramps gently. Even late in the run, every obstacle remains jumpable.
+    speed = Math.min(390, speed + 3.8 * dt);
     distance += speed * dt;
     score += speed * dt * 0.024;
 
     // Spawn by distance, not by frames: this keeps the spacing stable even when the screen lags.
-    if (distance >= nextSpawnDistance && distance < GOAL_DISTANCE - 520) {
+    if (distance >= nextSpawnDistance && distance < GOAL_DISTANCE - 820) {
       spawnObstacle();
-      const gap = 500 + Math.random() * 250;
+      // Wide gaps are intentional: you always have several seconds to see the
+      // next log and decide whether to single- or double-jump.
+      const gap = 980 + Math.random() * 260;
       nextSpawnDistance = distance + gap;
     }
 
@@ -581,6 +601,7 @@
     obstacles = obstacles.filter(o => o.x > -80);
 
     // Physics.
+    const wasOnGround = bob.onGround;
     bob.vy += GRAVITY * dt;
     bob.feetY += bob.vy * dt;
     if (bob.feetY >= GROUND) {
@@ -588,10 +609,14 @@
       bob.vy = 0;
       bob.onGround = true;
       bob.jumpCount = 0;
+      bob.coyote = 0.10;
       updateJumpHud();
     } else {
       bob.onGround = false;
+      bob.coyote = Math.max(0, bob.coyote - dt);
     }
+    // A tiny grace period makes a jump input feel consistent right after landing.
+    if (!wasOnGround && bob.onGround) bob.jumpCount = 0;
 
     bob.runPhase += dt * (speed / 24);
     bob.blink += dt;
@@ -646,6 +671,11 @@
   canvas.addEventListener('pointerdown', event => {
     event.preventDefault();
     jump();
+  }, { passive: false });
+
+  canvas.addEventListener('dblclick', event => {
+    event.preventDefault();
+    if (running && !bob.onGround && bob.jumpCount === 1) performJump();
   }, { passive: false });
 
   window.addEventListener('keydown', event => {
