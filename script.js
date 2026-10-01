@@ -261,8 +261,11 @@ function nextPhoto(step) {
 
 photos.forEach((photo, index) => {
   photo.addEventListener("click", event => {
-    event.preventDefault();
-    openPhoto(index);
+    // Keep the native link as a guaranteed fallback: remove preventDefault so the JPG can always open.
+    if (lightbox && lightboxImg) {
+      event.preventDefault();
+      openPhoto(index);
+    }
   });
   photo.addEventListener("keydown", event => {
     if (event.key === "Enter" || event.key === " ") {
