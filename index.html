@@ -56,15 +56,22 @@
       <p>Пробел / тап — прыжок. Перепрыгивай доски, набирай очки и доберись до балкона.</p>
     </div>
     <div class="game-shell">
-      <div class="game-top"><span>СЧЁТ <b id="score">0000</b></span><span>РЕКОРД <b id="best">0000</b></span></div>
-      <canvas id="game" width="1000" height="300" aria-label="Мини-игра: бобёр бежит к балкону и перепрыгивает доски"></canvas>
-      <div class="game-hint" id="gameHint">Нажми пробел или коснись игры, чтобы начать</div>
-      <div class="game-overlay" id="gameOverlay" aria-live="polite" hidden>
-        <div class="game-result">
-          <div class="result-kicker" id="gameResultKicker">ФИНИШ</div>
-          <h3 id="gameResultTitle">Бобёр добрался до балкона!</h3>
-          <p id="gameResultScore">Счёт: 0000</p>
-          <button class="restart" id="restart" type="button">Начать с начала</button>
+      <div class="game-top">
+        <div><span class="game-label">СЧЁТ</span><b id="score">0000</b></div>
+        <div><span class="game-label">РЕКОРД</span><b id="best">0000</b></div>
+        <div class="game-tip">ПРОБЕЛ / ↑ / ТАП — ПРЫЖОК</div>
+      </div>
+      <div class="game-stage">
+        <canvas id="game" width="1000" height="340" aria-label="Мини-игра: бобёр бежит к балкону и перепрыгивает брёвна"></canvas>
+        <div class="game-hint" id="gameHint">Нажми пробел или коснись игры, чтобы начать</div>
+        <div class="game-overlay" id="gameOverlay" aria-live="polite" hidden>
+          <div class="game-result">
+            <div class="result-icon">🦫</div>
+            <div class="result-kicker" id="gameResultKicker">ФИНИШ • 100BALKONOFF</div>
+            <h3 id="gameResultTitle">Бобёр добрался до балкона!</h3>
+            <p id="gameResultScore">Счёт: 0000</p>
+            <button class="restart" id="restart" type="button">Начать с начала</button>
+          </div>
         </div>
       </div>
     </div>
@@ -83,20 +90,20 @@
 
 <section id="portfolio" class="section portfolio-section">
   <div class="wrap">
-    <div class="section-heading"><span class="kicker">ПОРТФОЛИО</span><h2>Реальные работы 100balkonoff</h2><p>Нажмите на фотографию, чтобы открыть её крупно.</p></div>
+    <div class="section-heading"><span class="kicker">ПОРТФОЛИО</span><h2>Реальные работы 100balkonoff</h2><p>Нажмите на фотографию — она откроется в новой вкладке.</p></div>
     <div class="portfolio-group"><h3>Обшивка евровагонкой</h3><div class="gallery">
-      <a class="photo" target="_blank" rel="noopener" href="./images/cladding-1.jpg" data-full="images/cladding-1.jpg"><img src="images/cladding-1.jpg" alt="Обшивка балкона евровагонкой" loading="lazy"></a>
-      <a class="photo" target="_blank" rel="noopener" href="./images/cladding-2.jpg" data-full="images/cladding-2.jpg"><img src="images/cladding-2.jpg" alt="Балкон с отделкой евровагонкой" loading="lazy"></a>
-      <a class="photo" target="_blank" rel="noopener" href="./images/cladding-3.jpg" data-full="images/cladding-3.jpg"><img src="images/cladding-3.jpg" alt="Отделка балкона деревом" loading="lazy"></a>
-      <a class="photo" target="_blank" rel="noopener" href="./images/cladding-4.jpg" data-full="images/cladding-4.jpg"><img src="images/cladding-4.jpg" alt="Балкон с деревянной отделкой" loading="lazy"></a>
+      <a class="photo" target="_blank" rel="noopener" href="./images/cladding-1.jpg"><img src="images/cladding-1.jpg" alt="Обшивка балкона евровагонкой" loading="lazy"></a>
+      <a class="photo" target="_blank" rel="noopener" href="./images/cladding-2.jpg"><img src="images/cladding-2.jpg" alt="Балкон с отделкой евровагонкой" loading="lazy"></a>
+      <a class="photo" target="_blank" rel="noopener" href="./images/cladding-3.jpg"><img src="images/cladding-3.jpg" alt="Отделка балкона деревом" loading="lazy"></a>
+      <a class="photo" target="_blank" rel="noopener" href="./images/cladding-4.jpg"><img src="images/cladding-4.jpg" alt="Балкон с деревянной отделкой" loading="lazy"></a>
     </div></div>
     <div class="portfolio-group"><h3>Покраска балконов</h3><div class="gallery">
-      <a class="photo" target="_blank" rel="noopener" href="./images/painting-yellow.jpg" data-full="images/painting-yellow.jpg"><img src="images/painting-yellow.jpg" alt="Покраска балкона в жёлтый цвет" loading="lazy"></a>
-      <a class="photo" target="_blank" rel="noopener" href="./images/painting-green.jpg" data-full="images/painting-green.jpg"><img src="images/painting-green.jpg" alt="Покраска балкона в зелёный цвет" loading="lazy"></a>
-      <a class="photo" target="_blank" rel="noopener" href="./images/painting-green-2.jpg" data-full="images/painting-green-2.jpg"><img src="images/painting-green-2.jpg" alt="Покраска балкона" loading="lazy"></a>
-      <a class="photo" target="_blank" rel="noopener" href="./images/painting-pistachio.jpg" data-full="images/painting-pistachio.jpg"><img src="images/painting-pistachio.jpg" alt="Покраска балкона в фисташковый цвет" loading="lazy"></a>
-      <a class="photo" target="_blank" rel="noopener" href="./images/painting-graphite.jpg" data-full="images/painting-graphite.jpg"><img src="images/painting-graphite.jpg" alt="Покраска балкона в графитовый цвет" loading="lazy"></a>
-      <a class="photo" target="_blank" rel="noopener" href="./images/painting-white-blue.jpg" data-full="images/painting-white-blue.jpg"><img src="images/painting-white-blue.jpg" alt="Покраска балкона в бело-синих оттенках" loading="lazy"></a>
+      <a class="photo" target="_blank" rel="noopener" href="./images/painting-yellow.jpg"><img src="images/painting-yellow.jpg" alt="Покраска балкона в жёлтый цвет" loading="lazy"></a>
+      <a class="photo" target="_blank" rel="noopener" href="./images/painting-green.jpg"><img src="images/painting-green.jpg" alt="Покраска балкона в зелёный цвет" loading="lazy"></a>
+      <a class="photo" target="_blank" rel="noopener" href="./images/painting-green-2.jpg"><img src="images/painting-green-2.jpg" alt="Покраска балкона" loading="lazy"></a>
+      <a class="photo" target="_blank" rel="noopener" href="./images/painting-pistachio.jpg"><img src="images/painting-pistachio.jpg" alt="Покраска балкона в фисташковый цвет" loading="lazy"></a>
+      <a class="photo" target="_blank" rel="noopener" href="./images/painting-graphite.jpg"><img src="images/painting-graphite.jpg" alt="Покраска балкона в графитовый цвет" loading="lazy"></a>
+      <a class="photo" target="_blank" rel="noopener" href="./images/painting-white-blue.jpg"><img src="images/painting-white-blue.jpg" alt="Покраска балкона в бело-синих оттенках" loading="lazy"></a>
     </div></div>
   </div>
 </section>
