@@ -20,6 +20,7 @@
       <a href="#portfolio">Портфолио</a>
       <a href="#process">Как работаем</a>
       <a href="#contacts">Контакты</a>
+      <a href="#game-section">Игра</a>
     </nav>
     <a class="header-call" href="tel:+79241670077">Позвонить мастеру</a>
   </div>
@@ -49,34 +50,7 @@
   </div>
 </section>
 
-<section class="game-section">
-  <div class="wrap">
-    <div class="section-heading compact">
-      <div><span class="kicker">МИНИ-ИГРА</span><h2>Помоги бобру добежать до балкона 🦫</h2></div>
-      <p>Пробел / тап — прыжок. Перепрыгивай доски, набирай очки и доберись до балкона.</p>
-    </div>
-    <div class="game-shell">
-      <div class="game-top">
-        <div><span class="game-label">СЧЁТ</span><b id="score">0000</b></div>
-        <div><span class="game-label">РЕКОРД</span><b id="best">0000</b></div>
-        <div class="game-tip">ПРОБЕЛ / ↑ / ТАП — ПРЫЖОК</div>
-      </div>
-      <div class="game-stage">
-        <canvas id="game" width="1000" height="340" aria-label="Мини-игра: бобёр бежит к балкону и перепрыгивает брёвна"></canvas>
-        <div class="game-hint" id="gameHint">Нажми пробел или коснись игры, чтобы начать</div>
-        <div class="game-overlay" id="gameOverlay" aria-live="polite" hidden>
-          <div class="game-result">
-            <div class="result-icon">🦫</div>
-            <div class="result-kicker" id="gameResultKicker">ФИНИШ • 100BALKONOFF</div>
-            <h3 id="gameResultTitle">Бобёр добрался до балкона!</h3>
-            <p id="gameResultScore">Счёт: 0000</p>
-            <button class="restart" id="restart" type="button">Начать с начала</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 <section id="services" class="section">
   <div class="wrap">
@@ -130,6 +104,36 @@
     <div class="contact-grid">
       <article class="contact-card"><span>🎨 Покраска</span><a class="phone" href="tel:+79118580714">8 911 858-07-14</a><div class="contact-links"><a href="tel:+79118580714">Позвонить</a><a href="https://wa.me/79118580714" target="_blank" rel="noopener">WhatsApp</a><a href="tg://resolve?phone=79118580714">Telegram</a></div></article>
       <article class="contact-card"><span>🪵 Обшивка евровагонкой</span><a class="phone" href="tel:+79241670077">8 924 167-00-77</a><div class="contact-links"><a href="tel:+79241670077">Позвонить</a><a href="https://wa.me/79241670077" target="_blank" rel="noopener">WhatsApp</a><a href="tg://resolve?phone=79241670077">Telegram</a></div></article>
+    </div>
+  </div>
+</section>
+
+<section id="game-section" class="game-section">
+  <div class="wrap">
+    <div class="section-heading compact">
+      <div><span class="kicker">МИНИ-ИГРА</span><h2>Помоги бобру добежать до балкона 🦫</h2></div>
+      <p>Пробел / ↑ / тап — первый или второй прыжок. Перепрыгивай брёвна, набирай очки и доберись до балкона.</p>
+    </div>
+    <div class="game-shell">
+      <div class="game-top">
+        <div><span class="game-label">СЧЁТ</span><b id="score">0000</b></div>
+        <div><span class="game-label">РЕКОРД</span><b id="best">0000</b></div>
+        <div><span class="game-label">ПРЫЖКИ</span><b id="jumps">2/2</b></div>
+        <div class="game-tip">ПРОБЕЛ / ↑ / ТАП — 1-Й + 2-Й ПРЫЖОК</div>
+      </div>
+      <div class="game-stage">
+        <canvas id="game" width="1000" height="340" aria-label="Мини-игра: бобёр бежит к балкону и перепрыгивает брёвна"></canvas>
+        <div class="game-hint" id="gameHint">Нажми пробел или тап — бобёр подпрыгнет. Второе нажатие в воздухе даёт двойной прыжок.</div>
+        <div class="game-overlay" id="gameOverlay" aria-live="polite" hidden>
+          <div class="game-result">
+            <div class="result-icon">🦫</div>
+            <div class="result-kicker" id="gameResultKicker">ФИНИШ • 100BALKONOFF</div>
+            <h3 id="gameResultTitle">Бобёр добрался до балкона!</h3>
+            <p id="gameResultScore">Счёт: 0000</p>
+            <button class="restart" id="restart" type="button">Начать с начала</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>

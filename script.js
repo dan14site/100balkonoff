@@ -9,12 +9,17 @@
   const resultTitle = document.getElementById('gameResultTitle');
   const resultScore = document.getElementById('gameResultScore');
   const restart = document.getElementById('restart');
+  const jumpsEl = document.getElementById('jumps');
 
   // Logical game coordinates; CSS size stays responsive and the drawing scales to fit it.
   const W = 1000;
   const H = 340;
   const GROUND = 286;
-  const GOAL_DISTANCE = 1850;
+  const GOAL_DISTANCE = 4800;
+  const MAX_JUMPS = 2;
+  const GRAVITY = 1900;
+  const FIRST_JUMP_POWER = 760;
+  const SECOND_JUMP_POWER = 690;
 
   let cssWidth = W;
   let cssHeight = H;
@@ -22,15 +27,16 @@
   let running = false;
   let score = 0;
   let distance = 0;
-  let speed = 315;
+  let speed = 285;
   let last = 0;
-  let spawnTimer = 1.1;
+  let nextSpawnDistance = 650;
   let obstacles = [];
   let best = Number(localStorage.getItem('bobrBest') || 0);
   let animationId = 0;
   let startedOnce = false;
 
   bestEl.textContent = String(best).padStart(4, '0');
+  if (jumpsEl) jumpsEl.textContent = '2/2';
 
   const bob = {
     x: 105,
@@ -39,6 +45,7 @@
     h: 132,
     vy: 0,
     onGround: true,
+    jumpCount: 0,
     runPhase: 0,
     blink: 0
   };
@@ -46,26 +53,33 @@
   function getCanvasSize() {
     const rect = canvas.getBoundingClientRect();
     cssWidth = Math.max(320, rect.width || W);
-    cssHeight = Math.max(240, Math.min(340, cssWidth * 0.34));
+    cssHeight = Math.max(220, Math.min(340, cssWidth * 0.34));
     canvas.style.height = `${cssHeight}px`;
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(cssWidth * dpr);
     canvas.height = Math.round(cssHeight * dpr);
-    ctx.setTransform(dpr * cssWidth / W, 0, 0, dpr * cssHeight / H, 0, 0);
+
+    // Keep the 1000×340 game world proportional instead of stretching it on narrow screens.
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    const scale = Math.min((cssWidth * dpr) / W, (cssHeight * dpr) / H);
+    const offsetX = ((cssWidth * dpr) - W * scale) / 2;
+    const offsetY = ((cssHeight * dpr) - H * scale) / 2;
+    ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
   }
 
   getCanvasSize();
   window.addEventListener('resize', getCanvasSize);
 
-  function reset() {
+  function reset(autoJump = false) {
     score = 0;
     distance = 0;
-    speed = 315;
-    spawnTimer = 1.05;
+    speed = 285;
+    nextSpawnDistance = 650;
     obstacles = [];
     bob.feetY = GROUND;
     bob.vy = 0;
     bob.onGround = true;
+    bob.jumpCount = 0;
     bob.runPhase = 0;
     bob.blink = 0;
     running = true;
@@ -73,20 +87,44 @@
     hint.hidden = true;
     overlay.hidden = true;
     scoreEl.textContent = '0000';
+    updateJumpHud();
     last = performance.now();
     cancelAnimationFrame(animationId);
     animationId = requestAnimationFrame(loop);
+    if (autoJump) {
+      performJump();
+    }
+  }
+
+  function performJump() {
+    if (bob.onGround) {
+      bob.vy = -FIRST_JUMP_POWER;
+      bob.onGround = false;
+      bob.jumpCount = 1;
+      updateJumpHud();
+      return true;
+    }
+    if (bob.jumpCount < MAX_JUMPS) {
+      bob.vy = -SECOND_JUMP_POWER;
+      bob.jumpCount = MAX_JUMPS;
+      updateJumpHud();
+      return true;
+    }
+    return false;
   }
 
   function jump() {
     if (!running) {
-      reset();
+      reset(true);
       return;
     }
-    if (bob.onGround) {
-      bob.vy = -715;
-      bob.onGround = false;
-    }
+    performJump();
+  }
+
+  function updateJumpHud() {
+    if (!jumpsEl) return;
+    const available = Math.max(0, MAX_JUMPS - bob.jumpCount);
+    jumpsEl.textContent = `${available}/${MAX_JUMPS}`;
   }
 
   function drawBackground(t) {
@@ -463,11 +501,12 @@
   }
 
   function spawnObstacle() {
-    // Always keep the obstacles jumpable: compact width, moderate height, generous gaps.
-    const h = 30 + Math.random() * 28;
-    const w = 28 + Math.random() * 18;
+    // Obstacles have two sizes: normal and large. Both are designed around the two-jump mechanic.
+    const large = Math.random() < 0.28;
+    const h = large ? 56 + Math.random() * 17 : 36 + Math.random() * 18;
+    const w = large ? 54 + Math.random() * 18 : 38 + Math.random() * 16;
     obstacles.push({
-      x: W + 24,
+      x: W + 36,
       w,
       h,
       counted: false
@@ -501,13 +540,16 @@
   }
 
   function collides(o) {
-    const left = bob.x + 24;
-    const right = bob.x + bob.w - 14;
-    const top = bob.feetY - bob.h + 12;
-    const bottom = bob.feetY - 5;
-    const obstacleTop = GROUND - o.h + 4;
+    // Tighter hitboxes make the game fair: only the lower body/feet can hit a log.
+    const left = bob.x + 30;
+    const right = bob.x + bob.w - 24;
+    const top = bob.feetY - bob.h + 30;
+    const bottom = bob.feetY - 8;
+    const obstacleLeft = o.x + 4;
+    const obstacleRight = o.x + o.w - 4;
+    const obstacleTop = GROUND - o.h + 3;
     const obstacleBottom = GROUND;
-    return right > o.x && left < o.x + o.w && bottom > obstacleTop && top < obstacleBottom;
+    return right > obstacleLeft && left < obstacleRight && bottom > obstacleTop && top < obstacleBottom;
   }
 
   function loop(t) {
@@ -518,16 +560,16 @@
     ctx.clearRect(0, 0, W, H);
     drawBackground(t);
 
-    // Speed ramps gently so the game stays playable.
-    speed = Math.min(525, speed + 9.5 * dt);
+    // Speed ramps gently, leaving enough time to react to every obstacle.
+    speed = Math.min(445, speed + 6.2 * dt);
     distance += speed * dt;
     score += speed * dt * 0.024;
 
-    spawnTimer -= dt;
-    if (spawnTimer <= 0 && distance < GOAL_DISTANCE - 500) {
+    // Spawn by distance, not by frames: this keeps the spacing stable even when the screen lags.
+    if (distance >= nextSpawnDistance && distance < GOAL_DISTANCE - 520) {
       spawnObstacle();
-      // Gaps are based on speed so the player always has a realistic reaction window.
-      spawnTimer = 1.10 + Math.random() * 0.75;
+      const gap = 500 + Math.random() * 250;
+      nextSpawnDistance = distance + gap;
     }
 
     for (const o of obstacles) {
@@ -539,17 +581,19 @@
     obstacles = obstacles.filter(o => o.x > -80);
 
     // Physics.
-    bob.vy += 1780 * dt;
+    bob.vy += GRAVITY * dt;
     bob.feetY += bob.vy * dt;
     if (bob.feetY >= GROUND) {
       bob.feetY = GROUND;
       bob.vy = 0;
       bob.onGround = true;
+      bob.jumpCount = 0;
+      updateJumpHud();
     } else {
       bob.onGround = false;
     }
 
-    bob.runPhase += dt * (speed / 28);
+    bob.runPhase += dt * (speed / 24);
     bob.blink += dt;
     if (bob.blink > 4.5) bob.blink = bob.blink > 4.68 ? 0 : 4.52;
 
@@ -564,6 +608,16 @@
     }
 
     drawBeaver();
+
+    // Small running dust puffs make movement feel lively without hiding the beaver.
+    if (bob.onGround) {
+      const dust = (Math.sin(bob.runPhase * 1.8) + 1) * 0.5;
+      ctx.fillStyle = 'rgba(255,255,255,.55)';
+      ctx.beginPath();
+      ctx.arc(bob.x - 10 - dust * 5, GROUND - 4, 4 + dust * 2, 0, Math.PI * 2);
+      ctx.arc(bob.x - 22 - dust * 7, GROUND - 2, 2.5 + dust, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
     // Progress to the balcony.
     const progress = Math.min(1, distance / GOAL_DISTANCE);
@@ -595,7 +649,7 @@
   }, { passive: false });
 
   window.addEventListener('keydown', event => {
-    if (event.code === 'Space' || event.code === 'ArrowUp') {
+    if (!event.repeat && (event.code === 'Space' || event.code === 'ArrowUp')) {
       event.preventDefault();
       jump();
     }
