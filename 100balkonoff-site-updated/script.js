@@ -231,42 +231,47 @@ window.addEventListener("keydown", event => {
 });
 restart.addEventListener("click", reset);
 
-// Robust portfolio lightbox: every picture is also a real link to its file.
+// Portfolio: native browser links are the primary and most reliable way to open photos.
+// JavaScript intentionally does NOT cancel the click, so the JPG always opens in a new tab.
 const photos = [...document.querySelectorAll(".photo")];
+photos.forEach(photo => {
+  photo.setAttribute("target", "_blank");
+  photo.setAttribute("rel", "noopener");
+});
+
+// Optional lightbox: opens only when the browser supports the dialog API.
 const lightbox = document.getElementById("lightbox");
 const lightboxImg = document.getElementById("lb-img");
 let current = 0;
 
 function openPhoto(index) {
-  current = index;
   const photo = photos[index];
-  const img = photo.querySelector("img");
-  lightboxImg.src = photo.dataset.full || photo.href;
-  lightboxImg.alt = img ? img.alt : "Фотография работы 100balkonoff";
+  const img = photo?.querySelector("img");
+  if (!photo || !img || !lightbox || !lightboxImg) return;
+  current = index;
+  lightboxImg.src = photo.href;
+  lightboxImg.alt = img.alt || "Фотография работы 100balkonoff";
   lightbox.classList.add("open");
   lightbox.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
 }
 
 function closePhoto() {
+  if (!lightbox) return;
   lightbox.classList.remove("open");
   lightbox.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
 }
 
 function nextPhoto(step) {
+  if (!photos.length) return;
   current = (current + step + photos.length) % photos.length;
   openPhoto(current);
 }
 
+// Secondary mouse action: middle-click/right-click keep normal browser behavior.
+// We only offer the lightbox on Enter/Space for keyboard users.
 photos.forEach((photo, index) => {
-  photo.addEventListener("click", event => {
-    // Keep the native link as a guaranteed fallback: remove preventDefault so the JPG can always open.
-    if (lightbox && lightboxImg) {
-      event.preventDefault();
-      openPhoto(index);
-    }
-  });
   photo.addEventListener("keydown", event => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
@@ -275,14 +280,19 @@ photos.forEach((photo, index) => {
   });
 });
 
-document.querySelector(".lb-close").addEventListener("click", closePhoto);
-document.querySelector(".lb-prev").addEventListener("click", () => nextPhoto(-1));
-document.querySelector(".lb-next").addEventListener("click", () => nextPhoto(1));
-lightbox.addEventListener("click", event => {
-  if (event.target === lightbox) closePhoto();
-});
+const closeBtn = document.querySelector(".lb-close");
+const prevBtn = document.querySelector(".lb-prev");
+const nextBtn = document.querySelector(".lb-next");
+if (closeBtn) closeBtn.addEventListener("click", closePhoto);
+if (prevBtn) prevBtn.addEventListener("click", () => nextPhoto(-1));
+if (nextBtn) nextBtn.addEventListener("click", () => nextPhoto(1));
+if (lightbox) {
+  lightbox.addEventListener("click", event => {
+    if (event.target === lightbox) closePhoto();
+  });
+}
 window.addEventListener("keydown", event => {
-  if (!lightbox.classList.contains("open")) return;
+  if (!lightbox || !lightbox.classList.contains("open")) return;
   if (event.key === "Escape") closePhoto();
   if (event.key === "ArrowLeft") nextPhoto(-1);
   if (event.key === "ArrowRight") nextPhoto(1);
