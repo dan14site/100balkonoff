@@ -5,14 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="100balkonoff — обшивка балконов евровагонкой и покраска балконов в Якутске. Более 10 лет опыта. Бесплатный замер.">
 <title>100balkonoff — балконы в Якутске</title>
-<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="icon" href="images/mascot-head.webp" type="image/webp">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="site-header">
   <div class="wrap nav">
-    <a class="brand" href="#top"><img src="logo.svg" alt="100balkonoff"><span>100<span>balkonoff</span></span></a>
-    <nav>
+    <a class="brand" href="#top" aria-label="100balkonoff — на главную">
+      <img src="images/mascot-head.webp" alt="Бобёр 100balkonoff">
+      <span>100<span>balkonoff</span></span>
+    </a>
+    <nav aria-label="Основная навигация">
       <a href="#services">Услуги</a>
       <a href="#portfolio">Портфолио</a>
       <a href="#process">Как работаем</a>
@@ -37,6 +40,10 @@
     </div>
     <div class="hero-visual">
       <div class="photo-card"><img src="images/cladding-4.webp" alt="Балкон, обшитый евровагонкой"></div>
+      <div class="mascot-card">
+        <img src="images/mascot.webp" alt="Бобёр 100balkonoff в красном комбинезоне с молотком">
+        <span>Наш мастер<br>🦫 100balkonoff</span>
+      </div>
       <div class="badge"><strong>100</strong><small>balkonoff</small></div>
     </div>
   </div>
@@ -45,14 +52,21 @@
 <section class="game-section">
   <div class="wrap">
     <div class="section-heading compact">
-      <div><span class="kicker">ПЕРЕРЫВ НА СТРОЙКЕ</span><h2>Помоги бобру добежать до объекта 🦫</h2></div>
-      <p>Пробел / тап — прыжок. Чем дольше бежишь, тем быстрее становится игра.</p>
+      <div><span class="kicker">МИНИ-ИГРА</span><h2>Помоги бобру добежать до балкона 🦫</h2></div>
+      <p>Пробел / тап — прыжок. Перепрыгивай доски, набирай очки и доберись до балкона.</p>
     </div>
     <div class="game-shell">
       <div class="game-top"><span>СЧЁТ <b id="score">0000</b></span><span>РЕКОРД <b id="best">0000</b></span></div>
-      <canvas id="game" width="1000" height="250" aria-label="Игра с бобром"></canvas>
+      <canvas id="game" width="1000" height="300" aria-label="Мини-игра: бобёр бежит к балкону и перепрыгивает доски"></canvas>
       <div class="game-hint" id="gameHint">Нажми пробел или коснись игры, чтобы начать</div>
-      <button class="restart" id="restart">Играть снова</button>
+      <div class="game-overlay" id="gameOverlay" aria-live="polite" hidden>
+        <div class="game-result">
+          <div class="result-kicker" id="gameResultKicker">ФИНИШ</div>
+          <h3 id="gameResultTitle">Бобёр добрался до балкона!</h3>
+          <p id="gameResultScore">Счёт: 0000</p>
+          <button class="restart" id="restart" type="button">Начать с начала</button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -71,18 +85,18 @@
   <div class="wrap">
     <div class="section-heading"><span class="kicker">ПОРТФОЛИО</span><h2>Реальные работы 100balkonoff</h2><p>Нажмите на фотографию, чтобы открыть её крупно.</p></div>
     <div class="portfolio-group"><h3>Обшивка евровагонкой</h3><div class="gallery">
-      <button class="photo"><img src="images/cladding-1.webp" alt="Обшивка балкона евровагонкой"></button>
-      <button class="photo"><img src="images/cladding-2.webp" alt="Балкон с отделкой евровагонкой"></button>
-      <button class="photo"><img src="images/cladding-3.webp" alt="Отделка балкона деревом"></button>
-      <button class="photo"><img src="images/cladding-4.webp" alt="Балкон с деревянной отделкой"></button>
+      <a class="photo" href="images/cladding-1.webp" data-full="images/cladding-1.webp"><img src="images/cladding-1.webp" alt="Обшивка балкона евровагонкой" loading="lazy"></a>
+      <a class="photo" href="images/cladding-2.webp" data-full="images/cladding-2.webp"><img src="images/cladding-2.webp" alt="Балкон с отделкой евровагонкой" loading="lazy"></a>
+      <a class="photo" href="images/cladding-3.webp" data-full="images/cladding-3.webp"><img src="images/cladding-3.webp" alt="Отделка балкона деревом" loading="lazy"></a>
+      <a class="photo" href="images/cladding-4.webp" data-full="images/cladding-4.webp"><img src="images/cladding-4.webp" alt="Балкон с деревянной отделкой" loading="lazy"></a>
     </div></div>
     <div class="portfolio-group"><h3>Покраска балконов</h3><div class="gallery">
-      <button class="photo"><img src="images/painting-yellow.webp" alt="Покраска балкона в жёлтый цвет"></button>
-      <button class="photo"><img src="images/painting-green.webp" alt="Покраска балкона в зелёный цвет"></button>
-      <button class="photo"><img src="images/painting-green-2.webp" alt="Покраска балкона"></button>
-      <button class="photo"><img src="images/painting-pistachio.webp" alt="Покраска балкона в фисташковый цвет"></button>
-      <button class="photo"><img src="images/painting-graphite.webp" alt="Покраска балкона в графитовый цвет"></button>
-      <button class="photo"><img src="images/painting-white-blue.webp" alt="Покраска балкона в бело-синих оттенках"></button>
+      <a class="photo" href="images/painting-yellow.webp" data-full="images/painting-yellow.webp"><img src="images/painting-yellow.webp" alt="Покраска балкона в жёлтый цвет" loading="lazy"></a>
+      <a class="photo" href="images/painting-green.webp" data-full="images/painting-green.webp"><img src="images/painting-green.webp" alt="Покраска балкона в зелёный цвет" loading="lazy"></a>
+      <a class="photo" href="images/painting-green-2.webp" data-full="images/painting-green-2.webp"><img src="images/painting-green-2.webp" alt="Покраска балкона" loading="lazy"></a>
+      <a class="photo" href="images/painting-pistachio.webp" data-full="images/painting-pistachio.webp"><img src="images/painting-pistachio.webp" alt="Покраска балкона в фисташковый цвет" loading="lazy"></a>
+      <a class="photo" href="images/painting-graphite.webp" data-full="images/painting-graphite.webp"><img src="images/painting-graphite.webp" alt="Покраска балкона в графитовый цвет" loading="lazy"></a>
+      <a class="photo" href="images/painting-white-blue.webp" data-full="images/painting-white-blue.webp"><img src="images/painting-white-blue.webp" alt="Покраска балкона в бело-синих оттенках" loading="lazy"></a>
     </div></div>
   </div>
 </section>
@@ -114,9 +128,14 @@
 </section>
 </main>
 
-<footer><div class="wrap footer-inner"><div class="brand-mini"><img src="logo.svg" alt="">100balkonoff</div><span>Обшивка и покраска балконов · Якутск</span><a href="#top">↑ Наверх</a></div></footer>
+<footer><div class="wrap footer-inner"><div class="brand-mini"><img src="images/mascot-head.webp" alt="">100balkonoff</div><span>Обшивка и покраска балконов · Якутск</span><a href="#top">↑ Наверх</a></div></footer>
 
-<div class="lightbox" id="lightbox" aria-hidden="true"><button class="lb-close" aria-label="Закрыть">×</button><button class="lb-prev" aria-label="Предыдущее">‹</button><img id="lb-img" alt=""><button class="lb-next" aria-label="Следующее">›</button></div>
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lb-close" aria-label="Закрыть" type="button">×</button>
+  <button class="lb-prev" aria-label="Предыдущее" type="button">‹</button>
+  <img id="lb-img" alt="">
+  <button class="lb-next" aria-label="Следующее" type="button">›</button>
+</div>
 <script src="script.js"></script>
 </body>
 </html>
